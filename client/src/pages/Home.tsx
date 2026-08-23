@@ -13,9 +13,12 @@ import { ThreadLoom } from "@/features/threads/components/ThreadLoom";
 import { ThreadSearch } from "@/features/threads/components/ThreadSearch";
 import { VaultDialog } from "@/features/threads/components/VaultDialog";
 import { ResurfacingControls } from "@/features/threads/components/ResurfacingControls";
+import { FirstWeaveWalkthrough } from "@/features/threads/components/FirstWeaveWalkthrough";
 import { createThread, DEFAULT_RESURFACING_SETTINGS, DEFAULT_THREAD_SEARCH_FILTERS, filterThreads, getReturnCandidates, touchThread, transitionThread, type NewThreadInput, type ResurfacingSettings, type Thread, type ThreadSearchFilters, type ThreadState } from "@/features/threads/domain";
 import { illustrativeThreads } from "@/features/threads/seed";
 import { loadWorkspace, saveWorkspace, type WorkspaceSnapshot } from "@/features/threads/storage";
+
+const ONBOARDING_KEY = "threadloom.onboarding.v1.complete";
 
 export default function Home() {
   const [threads, setThreads] = useState<Thread[]>(illustrativeThreads);
@@ -23,6 +26,7 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string | undefined>(illustrativeThreads[0]?.id);
   const [isReady, setIsReady] = useState(false);
   const [searchFilters, setSearchFilters] = useState<ThreadSearchFilters>(DEFAULT_THREAD_SEARCH_FILTERS);
+  const [walkthroughOpen, setWalkthroughOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -34,6 +38,10 @@ export default function Home() {
       setIsReady(true);
     });
     return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (window.localStorage.getItem(ONBOARDING_KEY) !== "true") setWalkthroughOpen(true);
   }, []);
 
   useEffect(() => {
@@ -81,6 +89,10 @@ export default function Home() {
     setSelectedId(workspace.threads[0]?.id);
   }
 
+  function completeWalkthrough() {
+    window.localStorage.setItem(ONBOARDING_KEY, "true");
+  }
+
   return (
     <div className="threadloom-app">
       <header className="site-header">
@@ -89,6 +101,7 @@ export default function Home() {
           <span>threadloom</span>
         </a>
         <div className="header-status"><i /> local weave</div>
+        <button type="button" className="walkthrough-replay" onClick={() => setWalkthroughOpen(true)}>First weave</button>
         <Link className="header-guide-link" href="/guide">How to use</Link>
         <Link className="header-catalog-link" href="/research">Research catalog</Link>
         <VaultDialog threads={threads} settings={settings} onRestore={restoreWorkspace} />
@@ -156,6 +169,7 @@ export default function Home() {
         <span>Threadloom prototype · IndexedDB workspace · encrypted backup</span>
         <span>Built for long-lived context, not productivity theater.</span>
       </footer>
+      <FirstWeaveWalkthrough open={walkthroughOpen} onOpenChange={setWalkthroughOpen} onComplete={completeWalkthrough} />
     </div>
   );
 }

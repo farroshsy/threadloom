@@ -11,10 +11,12 @@ The prototype is grounded in a simple premise: a long-lived personal system need
 | Area | What it provides |
 |---|---|
 | **Interactive prototype** | A woven workspace for capturing strands, selecting them, resting them, resolving them, and gently revisiting old context. |
-| **Local-first persistence** | User-entered threads are stored in browser local storage. No account, server API, or third-party personal-data service is involved. |
+| **Local-first persistence** | User-entered threads are stored in browser IndexedDB. No account, server API, or third-party personal-data service is involved. |
 | **Encrypted ownership controls** | The active workspace now lives in IndexedDB, while export files are encrypted in-browser with a user-supplied passphrase before download. |
 | **Transparent return rules** | Users select eligible states, quiet interval, cue preference, and return-set size; every surfaced strand explains why it was selected. |
 | **Archive navigation** | Personal strands support full-text search, state/context filters, and sorting. The 100-concept research catalog is a searchable, filterable research cabinet at `/research`. |
+| **First-run support** | A short, local-only walkthrough explains capture, user-controlled resurfacing, and encrypted ownership; it can be replayed from the workspace header. |
+| **Backup checklist** | The Backup Vault offers a print-friendly ownership sheet that records safe export steps without exposing personal workspace data or a passphrase. |
 | **Feature-oriented architecture** | Domain rules, browser persistence, seed data, and presentation components are isolated to keep future migrations inexpensive. |
 | **Research artifact** | `docs/concept-research.md` contains 100 original personal-software concepts, rankings, top-ten deep dives, and a critical final selection. |
 | **Architecture decision record** | `docs/architecture-decision.md` explains the starter-template assessment, alternatives, trade-offs, selected design, risks, and planned increments. |
@@ -39,6 +41,12 @@ Threadloom’s return rail uses a deterministic, user-editable policy rather tha
 
 The main worktable now provides full-text search across titles, preserved reasons, cues, and context tags. It also supports state and context filters, plus last-visited, newest, oldest, and alphabetical arrangement. The separate **Research Cabinet** at `/research` parses the repository’s 100-idea catalog into searchable archival slips; it can be explored by text, curator weight, and arrangement without presenting the catalog as a generic ranked dashboard.
 
+## First-run guidance and practical help
+
+The first browser visit presents a three-step “First weave” guide. It introduces the smallest useful practice: record a strand and its **why**, make resurfacing rules explicit, and create an encrypted backup when the weave matters. A completion marker is kept only in local browser preferences, and users can reopen the guide from the workspace header at any time.
+
+Every resurfacing decision—eligible states, quiet interval, return-set size, and cue preference—has a keyboard-accessible help control. The help describes the visible deterministic rule rather than hiding an inference model behind the interface. The Backup Vault also contains a printable checklist for the user’s own ownership records. The checklist intentionally excludes backup content and tells users not to write a passphrase on it.
+
 ## Architecture
 
 ```text
@@ -46,6 +54,7 @@ client/src/
 ├── features/
 │   └── threads/
 │       ├── components/
+│       │   ├── FirstWeaveWalkthrough.tsx # Optional local-only first-run guide
 │       │   ├── ResurfacingControls.tsx # User-editable return policy
 │       │   ├── ThreadCapture.tsx      # Quick, contextual capture
 │       │   ├── ThreadInspector.tsx    # Selected-strand detail and transitions
@@ -66,7 +75,9 @@ client/src/
 
 docs/
 ├── architecture-decision.md
-└── concept-research.md
+├── concept-research.md
+├── onboarding-and-ownership-design.md
+└── security-and-resurfacing-design.md
 ```
 
 The domain is intentionally independent of React and storage. `domain.ts` owns the `Thread` vocabulary, state transitions, age formatting, and return ordering. `storage.ts` owns browser serialization. Components render user intent but do not know storage keys. This is the key revamp: a future IndexedDB, encrypted export/import, or sync adapter can replace persistence without rewriting the interface.
@@ -116,7 +127,7 @@ The app is frontend-only. No environment variables, account setup, database migr
 
 This is an intentionally bounded concept prototype, not a claim of durable personal archival software. Browser local storage can be cleared, has size limits, and is not encrypted. The current return set is a transparent deterministic ordering rule—open strands first, then least-recently-visited—rather than an opaque recommendation engine. The visual starter content is illustrative and should be deleted before personal use.
 
-The production-quality roadmap should not begin with AI. It should begin with ownership: IndexedDB, versioned migrations, encrypted export/import, and a recovery story. Only after users demonstrate that contextual return is valuable should the product consider optional, on-device semantic grouping or explainable resurfacing.
+The production-quality roadmap should not begin with AI. It should begin with continued ownership work: encrypted pre-restore snapshots, storage migrations, tested backup habits, and a recovery story. Only after users demonstrate that contextual return is valuable should the product consider optional, on-device semantic grouping or explainable resurfacing.
 
 ## Roadmap
 
@@ -129,7 +140,7 @@ The production-quality roadmap should not begin with AI. It should begin with ow
 
 ## Validation performed
 
-The revamp includes TypeScript checking, a production build, and six unit tests covering encrypted-envelope validation, transparent resurfacing reasons, return ordering, immutable state transitions, and date-age behavior. The interface is responsive, keyboard-focusable, and respects `prefers-reduced-motion` for nonessential motion.
+The revamp includes TypeScript checking, a production build, and six unit tests covering encrypted-envelope validation, transparent resurfacing reasons, return ordering, immutable state transitions, and date-age behavior. The interface is responsive, keyboard-focusable, offers an optional first-run guide, and respects `prefers-reduced-motion` for nonessential motion.
 
 ## Research references
 

@@ -3,7 +3,7 @@
  */
 
 import { useState, type ChangeEvent } from "react";
-import { Download, FileKey, FolderUp, LockKeyhole, ShieldCheck } from "lucide-react";
+import { Download, FileKey, FolderUp, LockKeyhole, Printer, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -31,7 +31,7 @@ function downloadBackup(backup: EncryptedBackup): void {
 
 export function VaultDialog({ threads, settings, onRestore }: VaultDialogProps) {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<"backup" | "restore">("backup");
+  const [mode, setMode] = useState<"backup" | "restore" | "checklist">("backup");
   const [passphrase, setPassphrase] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [backup, setBackup] = useState<EncryptedBackup>();
@@ -101,6 +101,10 @@ export function VaultDialog({ threads, settings, onRestore }: VaultDialogProps) 
     }
   }
 
+  function printChecklist() {
+    window.print();
+  }
+
   return (
     <Dialog open={open} onOpenChange={updateOpen}>
       <DialogTrigger asChild>
@@ -115,6 +119,7 @@ export function VaultDialog({ threads, settings, onRestore }: VaultDialogProps) 
         <div className="vault-tabs" role="tablist" aria-label="Backup controls">
           <button type="button" role="tab" aria-selected={mode === "backup"} className={mode === "backup" ? "active" : ""} onClick={() => { setMode("backup"); resetSensitiveState(); }}><Download size={14} /> Create backup</button>
           <button type="button" role="tab" aria-selected={mode === "restore"} className={mode === "restore" ? "active" : ""} onClick={() => { setMode("restore"); resetSensitiveState(); }}><FolderUp size={14} /> Restore backup</button>
+          <button type="button" role="tab" aria-selected={mode === "checklist"} className={mode === "checklist" ? "active" : ""} onClick={() => { setMode("checklist"); resetSensitiveState(); }}><Printer size={14} /> Backup checklist</button>
         </div>
         {mode === "backup" ? (
           <div className="vault-form">
@@ -122,18 +127,34 @@ export function VaultDialog({ threads, settings, onRestore }: VaultDialogProps) 
             <label>New backup passphrase<Input type="password" value={passphrase} onChange={(event) => setPassphrase(event.target.value)} placeholder="At least 12 characters" autoComplete="new-password" /></label>
             <label>Confirm passphrase<Input type="password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="Repeat the same passphrase" autoComplete="new-password" /></label>
           </div>
-        ) : (
+        ) : mode === "restore" ? (
           <div className="vault-form">
             <div className="vault-note"><FileKey size={17} /><p>Restoring replaces the current threads and return settings in this browser with the content of the encrypted backup.</p></div>
             <label className="vault-file-label">Choose encrypted backup<input type="file" accept="application/json,.json" onChange={chooseFile} /></label>
             {fileName && <p className="vault-file-name">Ready to unlock: {fileName}</p>}
             <label>Backup passphrase<Input type="password" value={passphrase} onChange={(event) => setPassphrase(event.target.value)} placeholder="The passphrase used for this file" autoComplete="current-password" /></label>
           </div>
+        ) : (
+          <section className="backup-checklist" aria-labelledby="backup-checklist-heading">
+            <div className="backup-checklist-mark"><LockKeyhole size={18} /><span>Threadloom ownership record</span></div>
+            <h3 id="backup-checklist-heading">Encrypted backup checklist</h3>
+            <p className="backup-checklist-intro">Use this page when you create a copy of your weave. It is deliberately free of your backup file, workspace data, and passphrase.</p>
+            <ol>
+              <li><i /> Create a new encrypted backup after meaningful additions or before changing devices.</li>
+              <li><i /> Confirm a file named like <code>threadloom-backup-YYYY-MM-DD.json</code> downloaded successfully.</li>
+              <li><i /> Keep a second copy in a separate secure place you control.</li>
+              <li><i /> Store the passphrase in a trusted password manager; do <strong>not</strong> write it on this checklist.</li>
+              <li><i /> Test restoration only in a cleared or temporary browser profile; restoring replaces the current weave.</li>
+            </ol>
+            <div className="backup-record-lines"><span>Backup date</span><i /><span>Storage location</span><i /><span>Restore test date</span><i /></div>
+            <p className="backup-checklist-note">Threadloom cannot recover a forgotten passphrase. Keep this checklist with your ownership records, not with the passphrase itself.</p>
+            <Button type="button" variant="outline" className="print-checklist" onClick={printChecklist}><Printer size={14} /> Print checklist</Button>
+          </section>
         )}
         {status && <p className="vault-status" role="status">{status}</p>}
         <DialogFooter>
           <Button variant="outline" type="button" onClick={() => updateOpen(false)}>Close</Button>
-          {mode === "backup" ? <Button type="button" onClick={makeBackup} disabled={isWorking}>{isWorking ? "Encrypting…" : "Download encrypted backup"}</Button> : <Button type="button" onClick={restoreBackup} disabled={isWorking || !backup}>{isWorking ? "Unlocking…" : "Restore this workspace"}</Button>}
+          {mode === "backup" ? <Button type="button" onClick={makeBackup} disabled={isWorking}>{isWorking ? "Encrypting…" : "Download encrypted backup"}</Button> : mode === "restore" ? <Button type="button" onClick={restoreBackup} disabled={isWorking || !backup}>{isWorking ? "Unlocking…" : "Restore this workspace"}</Button> : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
