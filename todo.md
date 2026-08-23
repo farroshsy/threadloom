@@ -9,3 +9,9 @@
 - [x] Add unit tests for encryption envelope parsing and resurfacing scoring.
 - [x] Update the README and architecture decision record.
 - [x] Run tests, type checks, production build, and desktop/mobile visual verification.
+
+## In-site guide enhancement
+
+- [x] Define the guide’s promise, outcomes, and usage sequence.
+- [x] Build the responsive guide route and connect it to the primary navigation.
+- [x] Verify the guide content, navigation, responsive layout, and production build.

@@ -86,3 +86,5 @@ The mark is a **split spindle**: two offset charcoal strokes bound by one vermil
 ## Style Decisions
 
 Research views are handled as a **cabinet of archival slips**, not as a conventional equal-card leaderboard. Any numerical prioritization is visually secondary and described as *curator weight* rather than performance. Every page carries an unmistakable Threadloom motif—fiber texture, a thread line, a margin annotation, or woven density—so the product remains recognizable outside the primary loom workspace.
+
+Guide and utility views carry a persistent, low-contrast thread or fiber geometry beneath their paper surfaces. Loom red is reserved for **living attention**—active filaments, return cues, and key margin annotations—rather than generic decoration. Instructional utility marks are translated into quiet spindle, knot, marker, loop, slip, and vault forms instead of generic application icons.

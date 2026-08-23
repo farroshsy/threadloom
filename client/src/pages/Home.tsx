@@ -89,6 +89,7 @@ export default function Home() {
           <span>threadloom</span>
         </a>
         <div className="header-status"><i /> local weave</div>
+        <Link className="header-guide-link" href="/guide">How to use</Link>
         <Link className="header-catalog-link" href="/research">Research catalog</Link>
         <VaultDialog threads={threads} settings={settings} onRestore={restoreWorkspace} />
       </header>

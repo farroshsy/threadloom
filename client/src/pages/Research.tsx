@@ -25,7 +25,7 @@ export default function Research() {
       <header className="site-header">
         <Link className="brand" href="/"><img src="/manus-storage/threadloom-logo_c83984d2.png" alt="" /><span>threadloom</span></Link>
         <div className="header-status"><i /> research cabinet</div>
-        <Link className="research-back" href="/"><ArrowLeft size={15} /> Return to loom</Link>
+        <nav className="guide-nav" aria-label="Research navigation"><Link href="/guide">How to use</Link><Link className="research-back" href="/"><ArrowLeft size={15} /> Return to loom</Link></nav>
       </header>
       <main className="research-main">
         <section className="research-hero">
