@@ -82,3 +82,7 @@ The mark is a **split spindle**: two offset charcoal strokes bound by one vermil
 ### Signature Brand Color
 
 **Loom red — `#C94832`**. It signifies live context: neither an error nor a generic call to action.
+
+## Style Decisions
+
+Research views are handled as a **cabinet of archival slips**, not as a conventional equal-card leaderboard. Any numerical prioritization is visually secondary and described as *curator weight* rather than performance. Every page carries an unmistakable Threadloom motif—fiber texture, a thread line, a margin annotation, or woven density—so the product remains recognizable outside the primary loom workspace.

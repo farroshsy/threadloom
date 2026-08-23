@@ -74,6 +74,12 @@ The critical rule is: **React components do not own the definition of a strand o
 | 3. Return intelligence | Local cue scoring, “why now?” explanations, revisit feedback. | Tests whether context beats generic reminders. |
 | 4. Optional sync | End-to-end encrypted sync with a user-held recovery key. | Only justified when single-device use has proven insufficient. |
 
+## Implemented ownership increment
+
+The prototype now uses IndexedDB for its active workspace and exposes a versioned encrypted export/import path. The downloaded envelope derives a non-extractable AES-256-GCM key from a user passphrase through PBKDF2-SHA-256, carries a random salt and initialization vector, and validates the decrypted schema before restoring it. The passphrase remains transient UI input and is never stored. This is a practical ownership improvement, not a claim that active browser storage is encrypted at rest.
+
+The resurfacing system is likewise deliberately bounded. It has no behavioral profiling or opaque predictive model: the user selects eligible states, a quiet interval, cue preference, and return-set size. The ranker emits the reasons for every suggested return. Search and archive navigation form an alternative route to recall when the user does not want any resurfacing at all.
+
 ## References
 
 [1] [Sedghi et al., *A qualitative study on personal information management*](https://pmc.ncbi.nlm.nih.gov/articles/PMC4715425/)

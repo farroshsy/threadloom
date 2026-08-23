@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { ageInDays, getReturnSet, transitionThread, type Thread } from "./domain";
+import { ageInDays, DEFAULT_RESURFACING_SETTINGS, getReturnCandidates, getReturnSet, transitionThread, type Thread } from "./domain";
 
 function thread(id: string, state: Thread["state"], lastVisitedAt: string): Thread {
   return {
@@ -25,9 +25,21 @@ describe("thread domain", () => {
       thread("new-open", "open", "2026-08-20T00:00:00.000Z"),
       thread("old-open", "open", "2026-08-03T00:00:00.000Z"),
       thread("resolved", "resolved", "2026-08-01T00:00:00.000Z"),
-    ]);
+    ], { ...DEFAULT_RESURFACING_SETTINGS, minimumDaysSinceVisit: 3 });
 
     expect(result.map((item) => item.id)).toEqual(["old-open", "new-open", "resting"]);
+  });
+
+  it("returns inspectable reasons instead of opaque recommendations", () => {
+    const candidates = getReturnCandidates([
+      { ...thread("with-cue", "open", "2026-08-01T00:00:00.000Z"), cue: "When you need a longer answer." },
+    ], DEFAULT_RESURFACING_SETTINGS, new Date("2026-08-23T00:00:00.000Z"));
+
+    expect(candidates[0].reasons).toEqual([
+      "It is still an open thread.",
+      "You have not visited it for 22 days.",
+      "You left a return cue for this strand.",
+    ]);
   });
 
   it("records state transitions as a fresh interaction", () => {

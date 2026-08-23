@@ -8,11 +8,12 @@ import { formatAge, STATE_LABELS, type Thread, type ThreadState } from "../domai
 
 type ThreadInspectorProps = {
   thread?: Thread;
+  returnReasons?: string[];
   onStateChange: (state: ThreadState) => void;
   onDelete: () => void;
 };
 
-export function ThreadInspector({ thread, onStateChange, onDelete }: ThreadInspectorProps) {
+export function ThreadInspector({ thread, returnReasons, onStateChange, onDelete }: ThreadInspectorProps) {
   if (!thread) {
     return (
       <aside className="inspector inspector-empty" aria-live="polite">
@@ -32,6 +33,12 @@ export function ThreadInspector({ thread, onStateChange, onDelete }: ThreadInspe
         <div className="return-cue">
           <span>Return cue</span>
           <p>{thread.cue}</p>
+        </div>
+      )}
+      {returnReasons && (
+        <div className="return-reasons">
+          <span>Why it returned</span>
+          <ul>{returnReasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
         </div>
       )}
       <div className="thread-facts">
